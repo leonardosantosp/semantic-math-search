@@ -1,0 +1,5 @@
+###
+GET http://localhost:3000/search-formula?formula="sua_formula"&mode="DIRECT"
+
+###
+GET http://localhost:3000/search-formula?formula="sua_formula"&mode="TOKENIZED"

@@ -5,9 +5,10 @@ import { TokenResponse } from '../interfaces/token-response';
 
 @Injectable()
 export class GenerateTokensService {
+    private readonly logger = new Logger()
     constructor(private readonly configService: ConfigService,
-        private readonly generateEmbeddings: GenerateEmbeddingsService,
-        private readonly logger = new Logger()
+        private readonly generateEmbeddings: GenerateEmbeddingsService
+        
      ){}
 
     async generate(formula: string){

@@ -4,8 +4,10 @@ import { ConfigService } from '@nestjs/config'
 import { SemanticSearchMode, ElasticIndexes } from 'src/commom/enums/formula-index.enum';
 @Injectable()
 export class SemanticSearchService {
-    constructor(private readonly configService: ConfigService, private readonly elasticClient: Client) {
-        elasticClient = new Client({
+
+    private readonly elasticClient: Client
+    constructor(private readonly configService: ConfigService) {
+        this.elasticClient = new Client({
             node: "https://localhost:9200",
             auth: {
                 username: this.configService.getOrThrow("ELASTIC_USER"),

@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class GenerateEmbeddingsService {
-
-    constructor(private readonly configService: ConfigService,
-        private readonly logger = new Logger()){}
+    private readonly logger = new Logger()
+    constructor(private readonly configService: ConfigService
+       ){}
 
     async generate(formulaToSearch: string){
         this.logger.log("Gerando embeddins para a fórmula: ", formulaToSearch)

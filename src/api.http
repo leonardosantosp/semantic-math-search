@@ -1,5 +1,22 @@
-###
-GET http://localhost:3000/search-formula?formula="sua_formula"&mode="DIRECT"
+### Faz embedding da entrada e procura
+GET http://localhost:3000/search-formula?formula="""! = F \colon C \to """&mode=DIRECT
+
+
+### Tokeniza a entrada, faz embedding da entrada e procura 
+GET http://localhost:3000/search-formula?formula="""! \colon 2 \rightarrow 1"""&mode=TOKENIZED
+
+### REQ 2
+POST http://192.168.56.1:8080/api/formulas/process
+Content-Type: application/json
+
+{
+  "formula": ``(\int_{-\infty}^{\infty} e^{-x^2}dx=\sqrt{\pi}\)``
+}
 
 ###
-GET http://localhost:3000/search-formula?formula="sua_formula"&mode="TOKENIZED"
+POST http://localhost:8000/embed
+Content-Type: application/json
+
+{
+  "text": "x+y"
+}

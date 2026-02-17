@@ -15,29 +15,29 @@ export class SemanticSearchService {
             },
             tls: {
                 rejectUnauthorized: false
-            }
+            },
         });
     }
 
-    async getFormulas (embedding: Array<number>, mode: SemanticSearchMode)  {
+    async getFormulas(embedding: any, mode: SemanticSearchMode): Promise<any[]> {
         const embeddingField = mode === SemanticSearchMode.DIRECT ? "embedding" : "token_embedding"
+        const semanticSearchQuery = {
+            knn: {
+                field: embeddingField, // Campo onde os embeddings estão armazenados
+                query_vector: embedding.embedding,
+                k: 3, // Número de resultados
+                num_candidates: 100 // Número de candidatos a considerar
+            }
+        };
+
         const results = await this.elasticClient.search({
             index: ElasticIndexes[mode],
-            knn: {
-                field: embeddingField,
-                query_vector: embedding,
-                k: 3,
-                num_candidates: 1000
+            body: {
+                knn: semanticSearchQuery.knn
             }
-        });
+        } as any);
 
-        return {
-            total:
-            typeof results.hits.total === "number"
-                ? results.hits.total
-                : results.hits.total?.value || 0,
-            results: results.hits.hits
-        };
+        return results.hits.hits
     };
 }
 

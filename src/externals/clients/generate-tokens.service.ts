@@ -8,12 +8,13 @@ export class GenerateTokensService {
     private readonly logger = new Logger()
     constructor(private readonly configService: ConfigService,
         private readonly generateEmbeddings: GenerateEmbeddingsService
-        
-     ){}
+    ) { }
 
-    async generate(formula: string){
+    async generate(formula: string) {
+        console.log("ENTROU GENERATE")
         this.logger.log("Gerando tokens para a fórmula: ", formula)
-        const apiUrl = this.configService.getOrThrow<string>('GENERATE_TOKENS_API_URL')
+        const apiUrl = this.configService.getOrThrow<string>('GENERATE_TOKENS_API_URL') + "/api/formulas/process"
+        console.log("API URL: ", apiUrl)
         const apiResponse = await fetch(apiUrl, {
             method: "POST",
             headers: {
@@ -23,9 +24,10 @@ export class GenerateTokensService {
                 formula: formula
             })
         })
+        console.log("===response====")
         const data: TokenResponse = await apiResponse.json()
         const tokens = data.token
 
-        return await this.generateEmbeddings.generate(tokens)
-    }   
+        return tokens
+    }
 }

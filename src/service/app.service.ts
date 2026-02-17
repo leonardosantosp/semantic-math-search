@@ -1,19 +1,25 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SemanticSearchMode } from 'src/commom/enums/formula-index.enum';
 import { SemanticEmbeddingFactory } from 'src/facatory/semmantic-embedding.factory';
+import { SemanticSearchService } from './semantic-search.service';
 
 @Injectable()
 export class AppService {
-  
-  constructor(private readonly embeddingFactory: SemanticEmbeddingFactory){}
 
-  async getFormulaWithSemanticSearch(formula: string, mode: SemanticSearchMode ){
+  constructor(private readonly embeddingFactory: SemanticEmbeddingFactory, private readonly elasticService: SemanticSearchService) { }
+
+  async getFormulaWithSemanticSearch(formula: string, mode: SemanticSearchMode) {
     try {
       const embedding = await this.embeddingFactory.createEmbedding(formula, mode)
-      if(!embedding){
+      console.log("embedding", embedding)
+      if (!embedding) {
         throw new NotFoundException('No embedding returned')
       }
-      // TODO: Consultar no elastic
+      const results: any[] = await this.elasticService.getFormulas(embedding, mode)
+      return results.map(result => ({
+        score: result._score,
+        formula: result._source.formula
+      }))
     } catch (error) {
       throw error
     }

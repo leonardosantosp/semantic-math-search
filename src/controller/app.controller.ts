@@ -4,10 +4,11 @@ import { SemanticSearchMode } from 'src/commom/enums/formula-index.enum';
 
 @Controller('search-formula')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService) { }
 
   @Get()
-  async getFormulaWithSemanticSearch(@Query('formula') formula: string , @Query('mode') mode: SemanticSearchMode){
+  async getFormulaWithSemanticSearch(@Query('formula') formula: string, @Query('mode') mode: SemanticSearchMode) {
+    console.log("controller", formula, mode)
     return await this.appService.getFormulaWithSemanticSearch(formula, mode)
   }
 }

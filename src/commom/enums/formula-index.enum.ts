@@ -1,6 +1,6 @@
-export enum SemanticSearchMode  {
-  DIRECT = 'formulas_embedding',
-  TOKENIZED = 'formulas_token_embedding',
+export enum SemanticSearchMode {
+  DIRECT = 'DIRECT',
+  TOKENIZED = 'TOKENIZED'
 }
 
 export const ElasticIndexes = {

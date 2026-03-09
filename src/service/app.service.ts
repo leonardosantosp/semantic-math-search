@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { SemanticSearchMode } from 'src/commom/enums/formula-index.enum';
 import { SemanticEmbeddingFactory } from 'src/facatory/semmantic-embedding.factory';
 import { SemanticSearchService } from './semantic-search.service';
@@ -10,6 +10,7 @@ export class AppService {
 
   async getFormulaWithSemanticSearch(formula: string, mode: SemanticSearchMode) {
     try {
+      console.log("Gerando embedding")
       const embedding = await this.embeddingFactory.createEmbedding(formula, mode)
       console.log("embedding", embedding)
       if (!embedding) {

@@ -11,13 +11,10 @@ export class SemanticEmbeddingFactory {
     ) { }
 
     createEmbedding(formula: string, mode: SemanticSearchMode) {
-        console.log(mode)
         switch (mode) {
             case SemanticSearchMode.DIRECT:
-                console.log("case 1")
                 return this.directEmbeddingGenerator.generateEmbedding(formula)
             case SemanticSearchMode.TOKENIZED:
-                console.log("case 2")
                 return this.tokenizedEmbeddingGenerator.generateEmbedding(formula)
 
         }

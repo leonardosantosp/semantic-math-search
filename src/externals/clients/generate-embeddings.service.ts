@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config'
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class GenerateEmbeddingsService {
-    private readonly logger = new Logger()
+    private readonly logger = new Logger(GenerateEmbeddingsService.name)
     constructor(private readonly configService: ConfigService
     ) { }
 

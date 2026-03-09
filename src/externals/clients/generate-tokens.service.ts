@@ -1,20 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { GenerateEmbeddingsService } from './generate-embeddings.service';
-import { TokenResponse } from '../interfaces/token-response';
 
 @Injectable()
 export class GenerateTokensService {
-    private readonly logger = new Logger()
+    private readonly logger = new Logger(GenerateTokensService.name);
     constructor(private readonly configService: ConfigService,
         private readonly generateEmbeddings: GenerateEmbeddingsService
     ) { }
 
     async generate(formula: string) {
-        console.log("ENTROU GENERATE")
         this.logger.log("Gerando tokens para a fórmula: ", formula)
-        const apiUrl = this.configService.getOrThrow<string>('GENERATE_TOKENS_API_URL') + "/api/formulas/process"
-        console.log("API URL: ", apiUrl)
+        const apiUrl = this.configService.getOrThrow<string>('GENERATE_TOKENS_API_URL') + "api/formulas/process"
         const apiResponse = await fetch(apiUrl, {
             method: "POST",
             headers: {
@@ -24,10 +21,7 @@ export class GenerateTokensService {
                 formula: formula
             })
         })
-        console.log("===response====")
-        const data: TokenResponse = await apiResponse.json()
-        const tokens = data.token
-
-        return tokens
+        const data: string[] = await apiResponse.json()
+        return data
     }
 }

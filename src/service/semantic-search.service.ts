@@ -39,5 +39,7 @@ export class SemanticSearchService {
 
         return results.hits.hits
     };
+
+    
 }
 

@@ -12,6 +12,7 @@ export class AppService {
     try {
       console.log("Gerando embedding")
       const embedding = await this.embeddingFactory.createEmbedding(formula, mode)
+      console.log("Embedding gerado.")
       if (!embedding) {
         throw new NotFoundException('No embedding returned')
       }

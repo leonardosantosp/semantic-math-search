@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { SemanticSearchMode } from 'src/commom/enums/formula-index.enum';
 import { AppService } from '../service/app.service';
 
@@ -6,9 +6,9 @@ import { AppService } from '../service/app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get()
-  async getFormulaWithSemanticSearch(@Query('formula') formula: string, @Query('mode') mode: SemanticSearchMode) {
-    console.log("Requisição para buscar formula: ", formula, "para o modo: ", mode)
-    return await this.appService.getFormulaWithSemanticSearch(formula, mode)
+  @Post()
+  async getFormulaWithSemanticSearch(@Body() data: { mode: SemanticSearchMode, search_formula: string }) {
+    console.log("Requisição para buscar formula: ", data.search_formula, "para o modo: ", data.mode)
+    return await this.appService.getFormulaWithSemanticSearch(data.search_formula, data.mode)
   }
 }

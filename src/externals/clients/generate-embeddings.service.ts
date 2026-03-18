@@ -23,9 +23,7 @@ export class GenerateEmbeddingsService {
 
             })
 
-            console.log("apiRESPONSE", apiResponse)
             const data = await apiResponse.json()
-            console.log("DATA", data)
             return data
         } catch (error) {
             throw error;

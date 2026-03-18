@@ -10,18 +10,48 @@ export class TokenizedEmbeddingStrategy implements EmbeddingStrategy {
         private readonly embeddingGenerator: GenerateEmbeddingsService
     ) { }
 
+    // async generateEmbedding(formula: string) {
+    //     this.logger.log("Chamando função para gerar tokens")
+    //     const response: any = await this.tokenGenerator.generate(formula)
+
+    //     const embeddedList = await Promise.all(
+    //         response.tokens.map(token => this.embeddingGenerator.generate(token))
+    //     )
+
+    //     this.logger.log("Final Embedding: ", embeddedList)
+    //     const finalEmbedding = this.weightedAverageEmbedding(embeddedList)
+    //     return finalEmbedding
+    // }
+
     async generateEmbedding(formula: string) {
-        this.logger.log("Chamando função para gerar tokens")
-        const response: any = await this.tokenGenerator.generate(formula)
-        this.logger.log("Tokens gerados: ", response.tokens)
+        const response: any = await this.tokenGenerator.generate(formula);
+
+        // const embeddedList = await Promise.all(
+        //     response.tokens.map(async (token) => {
+        //         const res = await this.embeddingGenerator.generate(token);
+        //         // EXTRAÇÃO: Pegue apenas o array que está dentro da chave 'embedding'
+        //         return res.embedding;
+        //     })
+        // );
 
         const embeddedList = await Promise.all(
-            response.tokens.map(token => this.embeddingGenerator.generate(token))
-        )
+            response.tokens.map(async (token) => {
+                const res = await this.embeddingGenerator.generate(token);
+                // IMPORTANTE: Garanta que você está pegando o array numérico
+                return res.embedding || res;
+            })
+        );
 
-        const finalEmbedding = this.weightedAverageEmbedding(embeddedList)
-        this.logger.log("Final Embedding: ", finalEmbedding)
-        return finalEmbedding
+
+
+        // Agora o embeddedList é um number[][] puro
+        const finalEmbedding = this.weightedAverageEmbedding(embeddedList);
+
+        // IMPORTANTE: Para manter a compatibilidade com o seu AppService,
+        // retorne o resultado dentro de um objeto
+        console.log(" ============== Final Embedding: ", finalEmbedding);
+        console.log(" ============== Final Embedding dim: ", finalEmbedding.length);
+        return { embedding: finalEmbedding };
     }
 
 

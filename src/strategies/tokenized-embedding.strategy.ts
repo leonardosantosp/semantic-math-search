@@ -10,29 +10,9 @@ export class TokenizedEmbeddingStrategy implements EmbeddingStrategy {
         private readonly embeddingGenerator: GenerateEmbeddingsService
     ) { }
 
-    // async generateEmbedding(formula: string) {
-    //     this.logger.log("Chamando função para gerar tokens")
-    //     const response: any = await this.tokenGenerator.generate(formula)
-
-    //     const embeddedList = await Promise.all(
-    //         response.tokens.map(token => this.embeddingGenerator.generate(token))
-    //     )
-
-    //     this.logger.log("Final Embedding: ", embeddedList)
-    //     const finalEmbedding = this.weightedAverageEmbedding(embeddedList)
-    //     return finalEmbedding
-    // }
 
     async generateEmbedding(formula: string) {
         const response: any = await this.tokenGenerator.generate(formula);
-
-        // const embeddedList = await Promise.all(
-        //     response.tokens.map(async (token) => {
-        //         const res = await this.embeddingGenerator.generate(token);
-        //         // EXTRAÇÃO: Pegue apenas o array que está dentro da chave 'embedding'
-        //         return res.embedding;
-        //     })
-        // );
 
         const embeddedList = await Promise.all(
             response.tokens.map(async (token) => {
@@ -45,46 +25,67 @@ export class TokenizedEmbeddingStrategy implements EmbeddingStrategy {
 
 
         // Agora o embeddedList é um number[][] puro
-        const finalEmbedding = this.weightedAverageEmbedding(embeddedList);
+        const finalEmbedding = this.averageEmbedding(embeddedList);
 
-        // IMPORTANTE: Para manter a compatibilidade com o seu AppService,
-        // retorne o resultado dentro de um objeto
-        console.log(" ============== Final Embedding: ", finalEmbedding);
-        console.log(" ============== Final Embedding dim: ", finalEmbedding.length);
         return { embedding: finalEmbedding };
     }
 
 
-    private weightedAverageEmbedding(
+    // private weightedAverageEmbedding(
+    //     embeddings: number[][],
+    //     weights?: number[],
+    // ): number[] {
+    //     if (!embeddings.length) {
+    //         throw new Error('Lista de embeddings vazia');
+    //     }
+
+    //     const dimension = embeddings[0].length;
+
+    //     const result = new Array(dimension).fill(0);
+    //     const w = weights ?? new Array(embeddings.length).fill(1);
+
+    //     let weightSum = 0;
+
+    //     for (let i = 0; i < embeddings.length; i++) {
+    //         const embedding = embeddings[i];
+    //         const weight = w[i];
+
+    //         weightSum += weight;
+
+    //         for (let j = 0; j < dimension; j++) {
+    //             result[j] += embedding[j] * weight;
+    //         }
+    //     }
+
+    //     for (let j = 0; j < dimension; j++) {
+    //         result[j] = result[j] / weightSum;
+    //     }
+
+    //     return result;
+    // }
+
+    private async averageEmbedding(
         embeddings: number[][],
-        weights?: number[],
-    ): number[] {
+    ): Promise<number[]> {
         if (!embeddings.length) {
             throw new Error('Lista de embeddings vazia');
         }
 
-        const dimension = embeddings[0].length;
+        const response = await fetch(`${process.env.EMBEDDING_AVERAGE_API_URL}/aggregate/json`, {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body:
+                JSON.stringify({
+                    token_embeddings: embeddings
+                })
 
-        const result = new Array(dimension).fill(0);
-        const w = weights ?? new Array(embeddings.length).fill(1);
+        })
 
-        let weightSum = 0;
+        // Extrai o JSON e tipa o retorno como number[]
+        const data = await response.json() as number[];
 
-        for (let i = 0; i < embeddings.length; i++) {
-            const embedding = embeddings[i];
-            const weight = w[i];
-
-            weightSum += weight;
-
-            for (let j = 0; j < dimension; j++) {
-                result[j] += embedding[j] * weight;
-            }
-        }
-
-        for (let j = 0; j < dimension; j++) {
-            result[j] = result[j] / weightSum;
-        }
-
-        return result;
+        return data;
     }
 }
